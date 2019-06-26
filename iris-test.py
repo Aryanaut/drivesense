@@ -1,20 +1,25 @@
 import cv2
-import numpy as np
+import numpy as np 
 
-cap = cv2.VideoCapture("eye_recording.flv")
+face_cascade = cv2.CascadeClassifier("cascades/data/haarcascade_frontalface_default.xml")
+eye_cascade = cv2.CascadeClassifier("cascades/data/haarcascade_eye.xml")
+
+cap = cv2.VideoCapture(0)
 
 while True:
     ret, frame = cap.read()
-    roi = frame[269: 795, 537: 1416]
-    gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-    gray_roi = cv2.GaussianBlur(gray_roi, (7, 7), 0)
-    
-    _, threshold = cv2.threshold(gray_roi, 5, 255, cv2.THRESH_BINARY_INV)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
+    for (x,y,w,h) in faces:
+        cv2.rectangle(frame, (x,y), (x+w, y+h), (255, 0, 0), 3)
+        roi_gray = gray[y:y+h, x:x+w]
+        roi_color = frame[y:y+h, x:x+w]
+        eyes = eye_cascade.detectMultiScale(roi_gray)
+        for(ex, ey, ew, eh) in eyes:
+            cv2.rectangle(roi_color, (ex, ey), (ex+ew, ey+eh), (255, 0, 0), 3)
 
-    cv2.imshow('treshold',threshold)
-    #cv2.imshow('gray_roi', gray_roi)
-    #cv2.imshow('frame', frame)
-    if cv2.waitKey(20) & 0xFF == ord('q'):
+    cv2.imshow('frame', frame)
+    if cv2.waitKey(30) & 0xFF == ord('q'):
         break
 
 cap.release()
