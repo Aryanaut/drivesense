@@ -41,7 +41,7 @@ ap.add_argument("-v", "--video", type=str, default="",
 args = vars(ap.parse_args())
 
 EYE_THRESH = 0.3 #threshold for the eye. if it closes further then it is a blink
-EYE_CONSEC_FRAMES = 3 #number of frames the eye should be closed for it to be a blink
+EYE_CONSEC_FRAMES = 60 #number of frames the eye should be closed for it to be a blink
 
 COUNTER = 0
 TOTAL = 0
@@ -93,13 +93,11 @@ while True:
 		#adds to the counter 
 		if ear < EYE_THRESH:
 			COUNTER += 1
-
-		else:
 			if COUNTER >= EYE_CONSEC_FRAMES:
 				TOTAL += 1
 				playsound("beep-02.wav")
 
-			# reset the counter
+		else:
 			COUNTER = 0
 
 		cv2.putText(frame, "Blinks: {}".format(TOTAL), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
