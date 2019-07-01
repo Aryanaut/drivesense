@@ -96,11 +96,10 @@ while True:
 			if COUNTER >= EYE_CONSEC_FRAMES:
 				TOTAL += 1
 				playsound("beep-02.wav")
+				cv2.putText(frame, "DROSINESS DETECTED", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
 		else:
 			COUNTER = 0
-
-		cv2.putText(frame, "Blinks: {}".format(TOTAL), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
 		cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
