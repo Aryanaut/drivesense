@@ -5,16 +5,13 @@ from imutils.video import VideoStream
 from imutils import face_utils
 from threading import Thread
 import numpy as np
-from playsound import playsound
+#from playsound import playsound
 import argparse
 import imutils
 import time
 import dlib
 import cv2
-
-def sound_alarm(path):
-	# play an alarm sound
-	playsound.playsound(path)
+import os
 
 def eye_aR(eye):
     # compute the euclidean distances between the two sets of
@@ -41,7 +38,7 @@ ap.add_argument("-v", "--video", type=str, default="",
 args = vars(ap.parse_args())
 
 EYE_THRESH = 0.3 #threshold for the eye. if it closes further then it is a blink
-EYE_CONSEC_FRAMES = 60 #number of frames the eye should be closed for it to be a blink
+EYE_CONSEC_FRAMES = 40 #number of frames the eye should be closed for it to be a blink
 
 COUNTER = 0
 TOTAL = 0
@@ -56,8 +53,8 @@ predictor = dlib.shape_predictor(args["shape_predictor"])
 print("[INFO] starting video stream thread...")
 vs = FileVideoStream(args["video"]).start()
 #fileStream = True
-vs = VideoStream(src=0).start()
-# vs = VideoStream(usePiCamera=True).start()
+#vs = VideoStream(src=0).start()
+vs = VideoStream(usePiCamera=True).start()
 fileStream = False
 time.sleep(1.0)
 
@@ -95,7 +92,7 @@ while True:
 			COUNTER += 1
 			if COUNTER >= EYE_CONSEC_FRAMES:
 				TOTAL += 1
-				playsound("beep-02.wav")
+				os.system("aplay beep-02.wav")
 				cv2.putText(frame, "DROSINESS DETECTED", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
 		else:
