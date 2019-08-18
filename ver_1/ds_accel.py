@@ -9,6 +9,7 @@ import time
 import ctypes
 
 class ADXL:
+    global DEV_ADDR, INT_ENABLE, INT_MAP, THRESH_ACT, ACT_INACT_CTL, bus
     DEV_ADDR 		= 0x53
     INT_ENABLE 		= 0x2E
     INT_MAP 		= 0x2F
