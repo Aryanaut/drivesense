@@ -63,9 +63,9 @@ def main():
 	while True:
 		state = gpio.input(INT_PIN_2)
 		vals = bus.read_i2c_block_data(DEV_ADDR, 0x32, 6)
-		x = ctypes.c_int16(vals[0] | vals[1] << 8).value
-		y = ctypes.c_int16(vals[2] | vals[3] << 8).value
-		z = ctypes.c_int16(vals[4] | vals[5] << 8).value
+		#x = ctypes.c_int16(vals[0] | vals[1] << 8).value
+		#y = ctypes.c_int16(vals[2] | vals[3] << 8).value
+		#z = ctypes.c_int16(vals[4] | vals[5] << 8).value
 		#print(x, y, z, state)
 
 

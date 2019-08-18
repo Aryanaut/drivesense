@@ -12,6 +12,11 @@ import time
 import dlib
 import cv2
 import os
+import RPi.GPIO as gpio
+
+gpio.setmode(gpio.BCM)
+
+gpio.setup(24, gpio.OUT)
 
 def eye_aR(eye):
     # compute the euclidean distances between the two sets of
@@ -92,11 +97,16 @@ while True:
 			COUNTER += 1
 			if COUNTER >= EYE_CONSEC_FRAMES:
 				TOTAL += 1
-				os.system("aplay beep-02.wav")
-				cv2.putText(frame, "DROSINESS DETECTED", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+				#os.system("aplay beep-02.wav")
+				gpio.output(24, 1)
+				time.sleep(0.0025)
+				gpio.output(24, 0)
+				time.sleep(0.0025)
+				cv2.putText(frame, "DROWSINESS DETECTED", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
 		else:
 			COUNTER = 0
+			gpio.output(24, 0)
 
 		cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
