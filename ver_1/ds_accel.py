@@ -24,22 +24,30 @@ class ADXL:
         print("DID = 0x%2x\n" % (DID, ))
         bus.write_byte_data(DEV_ADDR, 0x2D, 0x08)
         gpio.setmode(gpio.BCM)
-        gpio.setup(24, gpio.OUT)
+        gpio.setup(24, gpio.IN)
+        # interrupt setup
+        bus.write_byte_data(DEV_ADDR, INT_ENABLE, 0x90) #enables interrupt
+        bus.write_byte_data(DEV_ADDR, INT_MAP, 0x90) #maps interrupts to INT_PIN2
+        bus.write_byte_data(DEV_ADDR, THRESH_ACT, 0x10) #threshold
+        bus.write_byte_data(DEV_ADDR, ACT_INACT_CTL, 0x70) #setting the x, y, z axis to participate in the interrupt detection
+        gpio.add_event_detect(24, gpio.RISING, callback=self.accel_cb)
+        self.evt = False
+    
+    def accel_cb(self, channel):
+        self.evt = True
 
-    def accel_cb():
-        return True
+    def check_evt(self):
+        evt = self.evt
+        self.evt = False
+        return evt
 
     def readData():
         vals = bus.read_i2c_block_data(DEV_ADDR, 0x32, 6)
         x = ctypes.c_int16(vals[0] | vals[1] << 8).value
         y = ctypes.c_int16(vals[2] | vals[3] << 8).value
         z = ctypes.c_int16(vals[4] | vals[5] << 8).value
-        return(x, y, z)
+        print(x, y, z)
 
-    def intRead():
-        bus.write_byte_data(DEV_ADDR, INT_ENABLE, 0x90) #enables interrupt
-        bus.write_byte_data(DEV_ADDR, INT_MAP, 0x90) #maps interrupts to INT_PIN2
-        bus.write_byte_data(DEV_ADDR, THRESH_ACT, 0x15) #threshold
-        bus.write_byte_data(DEV_ADDR, ACT_INACT_CTL, 0x70) #setting the x, y, z axis to participate in the interrupt detection
+       
         
-        gpio.add_event_detect(24, gpio.RISING, callback=accel_cb)
+        

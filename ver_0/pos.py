@@ -1,3 +1,4 @@
+from serial import Serial
 import pynmea2
 import time
 import serial
@@ -11,8 +12,8 @@ while True:
                 msg = pynmea2.parse("$GPRMC,054758.00,A,1256.30860,N,07735.16396,E,0.281,,110819,,,A*70")
                 lat = msg.latitude
                 lat = str(lat)
-                long = msg.longitude
-                long = str(long)
-                print("https://www.google.com/maps/place/"+lat+","+long)
+                lon = msg.longitude
+                lon = str(lon)
+                print("https://www.google.com/maps/place/"+lat+","+lon)
                 time.sleep(3)
 
