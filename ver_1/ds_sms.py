@@ -18,3 +18,10 @@ class sms:
          from_='+13343262498',
          to=number
      )
+    def sendWhatsapp(number, body):
+        message = client.messages \
+            .create(
+         body=body,
+         from_='whatsapp:+14155238886',
+         to=number
+     )

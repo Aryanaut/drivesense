@@ -4,7 +4,7 @@ import serial
 
 class GPS:
     def __init__(self):
-        global gps, line 
+        global gps, line, lat, lon
         gps = serial.Serial("/dev/ttyACM1", baudrate = 9600)
 
     def readAndDecode(self):

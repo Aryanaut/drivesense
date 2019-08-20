@@ -4,4 +4,5 @@ g = GPS()
 
 while True:
     g.readAndDecode()
-    g.link()
+    a = g.link()
+    print(a)
