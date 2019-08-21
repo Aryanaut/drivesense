@@ -23,14 +23,14 @@ def eye_aR(eye):
 	# vertical eye landmarks (x, y)-coordinates
 	A = dist.euclidean(eye[1], eye[5])
 	B = dist.euclidean(eye[2], eye[4])
- 
+
 	# compute the euclidean distance between the horizontal
 	# eye landmark (x, y)-coordinates
 	C = dist.euclidean(eye[0], eye[3])
- 
+
 	# compute the eye aspect ratio
 	ear = (A + B) / (2.0 * C)
- 
+
 	# return the eye aspect ratio
 	return ear
 
@@ -77,7 +77,7 @@ while True:
 		shape = predictor(gray, rect)
 		shape = face_utils.shape_to_np(shape) #converts facial landmarks into np array
 
-		leftEye = shape[lStart:lEnd] 
+		leftEye = shape[lStart:lEnd]
 		rightEye = shape[rStart: rEnd]
 		leftEAR = eye_aR(leftEye)
 		rightEAR = eye_aR(rightEye)
@@ -92,7 +92,7 @@ while True:
 		cv2.drawContours(frame, [leftEyeHull], -1, (0, 0, 255), 1)
 		cv2.drawContours(frame, [rightEyeHull], -1, (0, 0, 255), 1)
 
-		#adds to the counter 
+		#adds to the counter
 		if ear < EYE_THRESH:
 			COUNTER += 1
 			if COUNTER >= EYE_CONSEC_FRAMES:
@@ -118,8 +118,3 @@ while True:
 
 cv2.destroyAllWindows()
 vs.stop()
-
-
-
-
-

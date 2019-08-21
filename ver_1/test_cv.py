@@ -1,5 +1,5 @@
-from ds_cv2 import opencv
+from ds_cv2 import cv
 
-o = opencv()
+o = cv()
 
 o.drowsinessDetect()
