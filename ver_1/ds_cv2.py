@@ -58,8 +58,6 @@ class cv:
 
         COUNTER = 0
         TOTAL = 0
-        if fileStream and not vs.more():
-            break
         frame = vs.read()
         frame = imutils.resize(frame, width=450)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
