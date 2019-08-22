@@ -16,10 +16,10 @@ import RPi.GPIO as gpio
 class cv:
     def __init__(self):
         #setting global vals
-        global ap, THRESH, CONSEC_FRAMES, COUNTER, TOTAL, lStart, lEnd, rStart, rEnd, vs, fileStream, frame, detector, predictor 
+        global frame, ap, lStart, lEnd, rStart, rEnd, vs, fileStream, frame, detector, predictor 
 
         gpio.setmode(gpio.BCM)
-        gpio.setup(24, gpio.OUT)
+        gpio.setup(25, gpio.OUT)
         # construct the argument parse and parse the arguments
         ap = argparse.ArgumentParser()
         ap.add_argument("-p", "--shape-predictor", required=True,
@@ -27,12 +27,6 @@ class cv:
         ap.add_argument("-v", "--video", type=str, default="",
             help="path to input video file")
         args = vars(ap.parse_args())
-
-        THRESH = 0.3
-        CONSEC_FRAMES = 40
-
-        COUNTER = 0
-        TOTAL = 0
 
         print("[INFO] loading facial landmark predictor...")
         detector = dlib.get_frontal_face_detector()
@@ -46,6 +40,7 @@ class cv:
         #vs = VideoStream(src=0).start()
         vs = VideoStream(usePiCamera=True).start()
         fileStream = False
+        time.sleep(1)
 
     def eye_aR(self, eye):
         A = dist.euclidean(eye[1], eye[5])
@@ -58,55 +53,61 @@ class cv:
         return ear
 
     def drowsinessDetect(self):
-        while True:
-            global frame
-            frame = vs.read()
-            frame = imutils.resize(frame, width=500)
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) #grayscale
+        THRESH = 0.3
+        CONSEC_FRAMES = 40
 
-            rects = detector(gray, 0)
+        COUNTER = 0
+        TOTAL = 0
+        if fileStream and not vs.more():
+            break
+        frame = vs.read()
+        frame = imutils.resize(frame, width=450)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-            for rect in rects:
-                shape = predictor(gray, rect)
-                shape = face_utils.shape_to_np(shape)
+        rects = detector(gray, 0)
 
-                leftEye = shape[lStart:lEnd]
-                rightEye = shape[rStart:rEnd]
-                leftEAR = eye_aR(leftEye)
-                rightEAR = eye_aR(rightEAR)
+        for rect in rects:
+            shape = predictor(gray, rect)
+            shape = face_utils.shape_to_np(shape)
 
-                ear = (leftEAR + rightEAR) / 2.0
+            leftEye = shape[lStart:lEnd]
+            rightEye = shape[rStart:rEnd]
+            leftEAR = self.eye_aR(leftEye)
+            rightEAR = self.eye_aR(rightEye)
 
-                # getting convex hull
-                leftEyeHull = cv2.convexHull(leftEye)
-                rightEyeHull = cv2.convexHull(rightEye)
+            ear = (leftEAR + rightEAR) / 2.0
 
-                # drawing contours
-                cv2.drawContours(frame, [leftEyeHull], -1, (0, 0, 255), 1)
-                cv2.drawContours(frame, [rightEyeHull], -1, (0, 0, 255), 1)
+            # getting convex hull
+            leftEyeHull = cv2.convexHull(leftEye)
+            rightEyeHull = cv2.convexHull(rightEye)
 
-                # adding to the counter
-                if ear < THRESH:
-                    COUNTER += 1
-                    if COUNTER >= CONSEC_FRAMES:
-                        TOTAL += 1
-                        gpio.output(25, 1)
-                        time.sleep(0.0025)
-                        gpio.output(25, 0)
-                        time.sleep(0.0025)
-                        cv2.putText(frame, "DROWSINESS DETECTED", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            # drawing contours
+            cv2.drawContours(frame, [leftEyeHull], -1, (0, 0, 255), 1)
+            cv2.drawContours(frame, [rightEyeHull], -1, (0, 0, 255), 1)
 
-                else:
-                    COUNTER = 0
+            # adding to the counter
+            if ear < THRESH:
+                COUNTER += 1
+                if COUNTER >= CONSEC_FRAMES:
+                    TOTAL += 1
+                    gpio.output(25, 1)
+                    time.sleep(0.0025)
                     gpio.output(25, 0)
+                    time.sleep(0.0025)
+                    cv2.putText(frame, "DROWSINESS DETECTED", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-                cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            else:
+                COUNTER = 0
+                gpio.output(25, 0)
+                
 
-            cv2.imshow('frame', frame)
-            key = cv2.waitKey(1) & 0xFF
+            cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-            if key == ord('q'):
-                break
+        cv2.imshow('frame', frame)
+        key = cv2.waitKey(1) & 0xFF
+
+        if key == ord('q'):
+            break
 
 
             
