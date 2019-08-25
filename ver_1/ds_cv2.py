@@ -23,6 +23,7 @@ class cv:
         global sms, g, a, fileStream, gray, vs, ap, detector, predictor, lStart, lEnd, rStart, rEnd
         gpio.setmode(gpio.BCM)
         gpio.setup(25, gpio.OUT) # setting the speaker up
+        gpio.setup(21, gpio.IN) # panic button
         gpio.output(25, 1)
         sms = sms()
         g = GPS()
@@ -122,13 +123,20 @@ class cv:
             key = cv2.waitKey(1) & 0xFF
             g.readAndDecode()
             lnk = g.link()
+            m = "Crash at "+lnk
             if a.check_evt():
-                sms.sendMSG('+919740254990', lnk)
-                sms.sendWhatsapp('whatsapp:+919036430733', lnk)
+                sms.sendMSG('+919740254990', m)
+                sms.sendWhatsapp('whatsapp:+919036430733', m)
+                print("OK")
+
+            if gpio.input(21) == 1:
+                print("DETECTED")
+                sms.sendMSG("+919740254990", "Panic alert at"+m)
                 print("OK")
 
             if key == ord('q'):
                 break
+            
 
         cv2.destroyAllWindows()
         gpio.cleanup()
