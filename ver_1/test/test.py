@@ -1,6 +1,6 @@
-from ds_accel import ADXL
-from ds_sms import sms
-from ds_gps import GPS
+from ver_1.ds_accel import ADXL
+from ver_1.ds_sms import sms
+from ver_1.ds_gps import GPS
 import time
 
 a = ADXL()
@@ -13,5 +13,6 @@ while True:
         sms.sendMSG('+919036430733', lnk)
         sms.sendWhatsapp('whatsapp:+919036430733', lnk)
         print("OK")
+
         
 

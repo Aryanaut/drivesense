@@ -11,14 +11,14 @@ class sms:
         global client
         client = Client(account_sid, auth_token)
     
-    def sendMSG(number, body):
+    def sendMSG(self, number, body):
         message = client.messages \
             .create(
          body=body,
          from_='+13343262498',
          to=number
      )
-    def sendWhatsapp(number, body):
+    def sendWhatsapp(self, number, body):
         message = client.messages \
             .create(
          body=body,

@@ -12,14 +12,20 @@ import dlib
 import cv2
 import os
 import RPi.GPIO as gpio
+from ds_sms import sms
+from ds_gps import GPS
+from ds_accel import ADXL
 
 class cv:
+    global a
+    a = ADXL()
     def __init__(self):
-        global fileStream, gray, vs, ap, detector, predictor, lStart, lEnd, rStart, rEnd
+        global sms, g, a, fileStream, gray, vs, ap, detector, predictor, lStart, lEnd, rStart, rEnd
         gpio.setmode(gpio.BCM)
         gpio.setup(25, gpio.OUT) # setting the speaker up
         gpio.output(25, 1)
-
+        sms = sms()
+        g = GPS()
 
 
     def eye_aR(self, eye):
@@ -69,7 +75,7 @@ class cv:
             if fileStream and not vs.more:
                 break
             frame = vs.read()
-            frame = imutils.resize(frame, width=450)
+            frame = imutils.resize(frame, width=850)
             gray =  cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # grayscale
             rects = detector(gray, 0)
 
@@ -108,14 +114,22 @@ class cv:
                 else:
                     COUNTER = 0
                     gpio.output(25, 1)
+                    time.sleep(0.5)
 
                 cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
             cv2.imshow('frame', frame)
             key = cv2.waitKey(1) & 0xFF
+            g.readAndDecode()
+            lnk = g.link()
+            if a.check_evt():
+                sms.sendMSG('+919740254990', lnk)
+                sms.sendWhatsapp('whatsapp:+919036430733', lnk)
+                print("OK")
 
             if key == ord('q'):
                 break
 
         cv2.destroyAllWindows()
+        gpio.cleanup()
         vs.stop()
