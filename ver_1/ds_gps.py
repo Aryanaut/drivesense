@@ -1,3 +1,11 @@
+"""
+
+    ds_gps.py
+    Author: Aryan Mahesh
+    Description: code to get the current gps coordinates and make them into a google maps link
+    
+"""
+
 import pynmea2
 import time
 import serial

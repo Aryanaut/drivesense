@@ -1,3 +1,13 @@
+"""
+
+    ds_cv2.py 
+    Author: Aryan Mahesh
+    Description: Main code of DriveSense that detects the drowsiness of the user and beeps if detected
+    Sources: https://www.pyimagesearch.com/2017/04/24/eye-blink-detection-opencv-python-dlib/
+             https://www.pyimagesearch.com/2018/07/19/opencv-tutorial-a-guide-to-learn-opencv/
+
+"""
+
 from scipy.spatial import distance as dist
 from imutils.video import FileVideoStream
 from imutils.video import VideoStream

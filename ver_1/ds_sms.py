@@ -1,3 +1,9 @@
+"""
+    ds_sms.py
+    Author: Aryan Mahesh
+    Description: code to send an sms using twilio
+
+"""
 from twilio.rest import Client
 
 class sms:
