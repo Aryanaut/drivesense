@@ -5,7 +5,7 @@ import serial
 class GPS:
     def __init__(self):
         global gps
-        gps = serial.Serial("/dev/ttyUSB0", baudrate = 9600)
+        gps = serial.Serial("/dev/ttyACM1", baudrate = 9600)
 
     def readAndDecode(self):
         global lat, lon, lati, longi
