@@ -73,7 +73,7 @@ class cv:
         TOTAL = 0
         
         THRESH = 0.3
-        CONSEC_FRAMES = 30
+        CONSEC_FRAMES = 20
         vs = FileVideoStream(args["video"]).start()
         print("[INFO] loading video stream thread...")
         #fileStream = True
@@ -86,7 +86,7 @@ class cv:
             if fileStream and not vs.more:
                 break
             frame = vs.read()
-            frame = imutils.resize(frame, width=850)
+            #frame = imutils.resize(frame, width=850)
             gray =  cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # grayscale
             rects = detector(gray, 0)
 
