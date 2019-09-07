@@ -23,7 +23,7 @@ THRESH_ACT		= 0x24
 ACT_INACT_CTL 	= 0x27
 
 def accel_cb(channel):  
-    print("falling edge detected on 24: chan = %d\n" % (channel,)) 
+    print("crash alert at chan = %d\n" % (channel,)) 
 
 # Main function
 def main():
